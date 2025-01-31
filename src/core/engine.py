@@ -15,11 +15,12 @@ class ZoroEngine:
     def __init__(
         self,
         target: str,
-        modules: str | List[str] = "all",
-        threads: int = 10,
-        output_dir: str = "zoro_results",
-        silent: bool = False
+        modules: str | List[str] = "all",  # --> Modules to run (subdomains, ports, fingerprint, vulnerabilities)
+        threads: int = 10,  # --> Threads 
+        output_dir: str = "zoro_results", # --> Output directory for results
+        silent: bool = False # --> Silent mode 
     ):
+        # --> Initialize key attributes
         self.target = target
         self.modules = modules
         self.threads = threads
@@ -29,51 +30,49 @@ class ZoroEngine:
         self.results: Dict[str, Any] = {}
         self.rate_limiter = RateLimiter()
         
-        # Initialize module instances
+        # --> Initialize module instances
         self.subdomain_enum = SubdomainEnumerator(self.target, self.rate_limiter)
         self.port_scanner = PortScanner(self.rate_limiter)
         self.vuln_scanner = VulnerabilityScanner(self.rate_limiter)
         self.tech_fingerprinter = TechnologyFingerprinter(self.rate_limiter)
 
     async def initialize(self):
-        """Initialize the engine and prepare the environment"""
         self.logger.info("Initializing Zoro Engine...")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Load configurations and validate modules
+        # --> Load configurations and validate modules
         await self._load_config()
         await self._validate_modules()
 
     async def run(self):
-        """Execute all enabled modules in the correct order"""
         start_time = time.time()
         self.logger.info(f"Starting reconnaissance against {self.target}")
 
         try:
-            # Phase 1: Subdomain Enumeration
+            # --> Phase 1: Subdomain Enumeration
             if self._should_run_module("subdomains"):
                 self.results["subdomains"] = await self.subdomain_enum.run()
 
-            # Phase 2: Concurrent Port Scanning
+            # --> Phase 2: Concurrent Port Scanning
             if self._should_run_module("ports"):
                 targets = self.results.get("subdomains", [self.target])
                 self.results["ports"] = await self.port_scanner.scan_multiple(targets)
 
-            # Phase 3: Technology Fingerprinting
+            # --> Phase 3: Technology Fingerprinting
             if self._should_run_module("fingerprint"):
                 self.results["technologies"] = await self.tech_fingerprinter.analyze(
                     self.target,
                     self.results.get("ports", {})
                 )
 
-            # Phase 4: Vulnerability Scanning
+            # --> Phase 4: Vulnerability Scanning
             if self._should_run_module("vulnerabilities"):
                 self.results["vulnerabilities"] = await self.vuln_scanner.scan(
                     self.target,
                     self.results
                 )
 
-            # Generate Reports
+            # --> Generate Reports
             await self._generate_reports()
 
         except Exception as e:

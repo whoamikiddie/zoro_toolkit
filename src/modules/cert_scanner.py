@@ -5,27 +5,28 @@ from datetime import datetime
 
 class CertificateScanner:
     def __init__(self, sources: List[str], concurrent_queries: int = 5):
-        self.sources = sources
+        self.sources = sources # -->  fetch certificate data
         self.concurrent_queries = concurrent_queries
-        self.session = None
+        self.session = None # -->  aiohttp session to make a request
 
     async def scan(self, domain: str) -> Dict[str, Any]:
         """Scan certificate transparency logs for the domain"""
         results = {
-            "timestamp": datetime.now().isoformat(),
-            "domain": domain,
-            "certificates": []
+            "timestamp": datetime.now().isoformat(), # -->  timestamp
+            "domain": domain, # -->  domain being scanned
+            "certificates": [] # -->  list of certificates found
         }
 
+        # --> Creating a new aiohttp session
         async with aiohttp.ClientSession() as self.session:
             tasks = []
             for source in self.sources:
                 if source == "crt.sh":
-                    tasks.append(self._scan_crtsh(domain))
+                    tasks.append(self._scan_crtsh(domain)) # --> add task for crt.sh 
                 elif source == "censys":
-                    tasks.append(self._scan_censys(domain))
+                    tasks.append(self._scan_censys(domain)) # --> add task for censys
                 elif source == "certspotter":
-                    tasks.append(self._scan_certspotter(domain))
+                    tasks.append(self._scan_certspotter(domain)) # --> add task for certspotter
 
             cert_results = await asyncio.gather(*tasks)
             for result in cert_results:
@@ -37,6 +38,7 @@ class CertificateScanner:
         """Scan crt.sh for certificates"""
         url = f"https://crt.sh/?q={domain}&output=json"
         try:
+            # --> perform the http request to crt.sh 
             async with self.session.get(url) as response:
                 if response.status == 200:
                     data = await response.json()

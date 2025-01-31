@@ -1,27 +1,27 @@
-recon_toolkit/
+zoro_toolkit/
 ├── config/
-│   ├── api_keys.json
-│   ├── tools_config.json
+|   │   
 │   └── config.json
 ├── src/
+|   ├──core/
+|   |   ├──engine.py
 │   ├── __init__.py
-│   ├── main.py
-│   ├── reconnaissance/
-│   │   ├── __init__.py
-│   │   ├── recon.py
 │   ├── modules/
-│   │   └── subdomain_enumerator.py
+│   │   ├── __init__.py
+│   │   ├── cert_scanner.py
+|   |   ├──dns_enumerator.py
+|   |   ├──port_scanner.py
+|   |   ├──subdomain_enumerator.py
+|   |   ├──tech_fingerprinter.py
+|   |   ├──vulnerability_scanner.py
+|   |   ├──whois_scanner.py
+|   |
 │   ├── utils/
 │   │   ├── __init__.py
+│   │   ├── banner.py
 │   │   ├── logger.py
-│   │   ├── proxy_manager.py
-│   │   ├── rate_limit.py
-│   │   └── utils.py
-│   ├── reports/
-│   │   ├── __init__.py
-│   │   ├── report.py
-│   │   ├── markdown_report.py
-│   │   ├── json_report.py
-│   │   └── pdf_report.py
-
+│   │   ├── output_manager.py
+│   └── └── rate_limit.py
+│ 
+├── main.py
 └── requirements.txt
