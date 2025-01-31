@@ -1,0 +1,27 @@
+recon_toolkit/
+├── config/
+│   ├── api_keys.json
+│   ├── tools_config.json
+│   └── config.json
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── reconnaissance/
+│   │   ├── __init__.py
+│   │   ├── recon.py
+│   ├── modules/
+│   │   └── subdomain_enumerator.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── logger.py
+│   │   ├── proxy_manager.py
+│   │   ├── rate_limit.py
+│   │   └── utils.py
+│   ├── reports/
+│   │   ├── __init__.py
+│   │   ├── report.py
+│   │   ├── markdown_report.py
+│   │   ├── json_report.py
+│   │   └── pdf_report.py
+
+└── requirements.txt

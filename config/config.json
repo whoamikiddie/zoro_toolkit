@@ -1,0 +1,86 @@
+{
+    "toolkit": {
+      "name": "Zoro Toolkit",
+      "version": "1.0.0",
+      "author": "Whoamikiddie",
+      "description": "Advanced Information Gathering Toolkit"
+    },
+    "modules": {
+      "whois": {
+        "enabled": true,
+        "timeout": 30
+      },
+      "dns_enumeration": {
+        "enabled": true,
+        "record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT", "SOA", "PTR"],
+        "resolvers": [
+          "8.8.8.8",
+          "8.8.4.4",
+          "1.1.1.1",
+          "1.0.0.1",
+          "9.9.9.9"
+        ]
+      },
+      "subdomain_enumeration": {
+        "enabled": true,
+        "techniques": [
+          "dns",
+          "bruteforce",
+          "permutation",
+          "certificate",
+          "search_engines",
+          "wayback"
+        ],
+        "wordlist_size": "large",
+        "concurrent_tasks": 50,
+        "rate_limit": {
+          "requests_per_second": 10,
+          "burst": 20
+        }
+      },
+      "certificate_transparency": {
+        "enabled": true,
+        "sources": ["crt.sh", "censys", "certspotter"],
+        "concurrent_queries": 5
+      },
+      "search_engine_recon": {
+        "enabled": true,
+        "engines": ["google", "bing", "duckduckgo"],
+        "dorks": [
+          "site:{domain}",
+          "site:{domain} filetype:pdf",
+          "site:{domain} inurl:admin",
+          "site:{domain} intitle:\"index of\"",
+          "site:{domain} ext:php | ext:asp | ext:aspx"
+        ]
+      },
+      "technology_fingerprint": {
+        "enabled": true,
+        "techniques": ["headers", "body", "js_analysis", "wappalyzer_patterns"]
+      }
+    },
+    "output": {
+      "directory": "zoro_results",
+      "formats": ["json", "markdown", "html", "csv"],
+      "evidence_collection": true,
+      "screenshots": true,
+      "organization": {
+        "subdomain_results": "subdomains",
+        "dns_results": "dns",
+        "whois_results": "whois",
+        "technology_results": "technologies",
+        "certificates": "certificates",
+        "search_results": "search_engines"
+      }
+    },
+    "reporting": {
+      "templates": {
+        "markdown": true,
+        "html": true,
+        "json": true,
+        "csv": true
+      },
+      "include_metadata": true,
+      "timestamp_format": "YYYY-MM-DD HH:mm:ss"
+    }
+  }
