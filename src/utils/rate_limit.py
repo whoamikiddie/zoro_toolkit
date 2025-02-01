@@ -1,31 +1,26 @@
-import asyncio
 import time
-from typing import Optional
+from threading import Lock
 
 class RateLimiter:
-    def __init__(self, requests_per_second: int = 10, burst: int = 20):
+    def __init__(self, requests_per_second: int = 10):
         self.rate = requests_per_second
-        self.burst = burst
-        self.tokens = burst
-        self.last_update = time.monotonic()
-        self.lock = asyncio.Lock()
-    
-    async def acquire(self):
-        """Acquire a token for rate limiting"""
-        async with self.lock:
-            while self.tokens <= 0:
-                now = time.monotonic()
-                time_passed = now - self.last_update
-                self.tokens = min(
-                    self.burst,
-                    self.tokens + time_passed * self.rate
-                )
-                self.last_update = now
-                if self.tokens <= 0:
-                    await asyncio.sleep(1.0 / self.rate)
-            
-            self.tokens -= 1
-    
-    async def wait(self):
-        """Wait for rate limit"""
-        await self.acquire()
+        self.last_check = time.time()
+        self.allowance = requests_per_second
+        self._lock = Lock()
+
+    def wait(self):
+        """Token bucket algorithm for rate limiting"""
+        with self._lock:
+            current = time.time()
+            time_passed = current - self.last_check
+            self.last_check = current
+            self.allowance += time_passed * self.rate
+
+            if self.allowance > self.rate:
+                self.allowance = self.rate
+
+            if self.allowance < 1.0:
+                time.sleep((1.0 - self.allowance) / self.rate)
+                self.allowance = 0.0
+            else:
+                self.allowance -= 1.0

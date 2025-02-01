@@ -13,7 +13,7 @@ zoro_toolkit/
 |   |   ├──port_scanner.py
 |   |   ├──subdomain_enumerator.py
 |   |   ├──tech_fingerprinter.py
-|   |   ├──vulnerability_scanner.py
+|   |   |
 |   |   ├──whois_scanner.py
 |   |
 │   ├── utils/
