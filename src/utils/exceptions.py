@@ -1,3 +1,4 @@
+# ssrc/utils/exceptions.py
 class ZoroToolkitError(Exception):
     """Base exception for Zoro Toolkit."""
     pass

@@ -1,3 +1,4 @@
+# src/utils/logger.py
 import logging
 import sys
 import os
@@ -5,6 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 import json
+
+# Define custom log level for SUCCESS
+SUCCESS_LEVEL_NUM = 25
+logging.addLevelName(SUCCESS_LEVEL_NUM, "SUCCESS")
 
 class Logger:
     def __init__(self, name: str = "ZoroToolkit"):
@@ -90,7 +95,7 @@ class Logger:
 
     def success(self, message: str, scan_data: Optional[dict] = None):
         """Custom success level with green color"""
-        self._log_with_data('SUCCESS', message, scan_data)
+        self.logger.log(SUCCESS_LEVEL_NUM, message, extra={'scan_data': scan_data} if scan_data else {})
 
     def warning(self, message: str, scan_data: Optional[dict] = None):
         self._log_with_data('WARNING', message, scan_data)

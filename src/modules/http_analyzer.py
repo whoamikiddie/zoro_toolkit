@@ -1,3 +1,4 @@
+# src/modules/http_analyzer.py
 import socket
 import ssl
 import urllib.request

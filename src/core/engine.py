@@ -1,3 +1,4 @@
+# src/core/engine.py
 import asyncio
 import threading
 from queue import Queue

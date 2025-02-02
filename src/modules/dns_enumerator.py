@@ -1,3 +1,4 @@
+# src/modules/dns_enumerator.py
 import socket
 from typing import List, Dict
 from ..utils.logger import Logger

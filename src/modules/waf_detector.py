@@ -1,3 +1,4 @@
+# src/modules/waf_detector.py
 import re
 import requests
 from typing import Dict, List
