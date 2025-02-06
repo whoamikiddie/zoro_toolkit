@@ -1,4 +1,3 @@
-# src/utils/logger.py
 import logging
 import sys
 import os
@@ -49,13 +48,33 @@ class Logger:
                 def format(self, record):
                     color = self.COLORS.get(record.levelname, self.COLORS['RESET'])
                     symbol = self.SYMBOLS.get(record.levelname, '')
-                    record.msg = f"{color}{symbol} {record.msg}{self.COLORS['RESET']}"
-                    return super().format(record)
+                    
+                    # Get the raw message
+                    msg = record.getMessage()
+                    
+                    # Split message into lines for proper indentation
+                    lines = msg.split('\n')
+                    formatted_lines = []
+                    
+                    # Format first line with timestamp, color, and symbol
+                    if lines:
+                        timestamp = datetime.fromtimestamp(record.created).strftime('%H:%M:%S')
+                        formatted_lines.append(f"{timestamp} - {color}{symbol} {lines[0]}{self.COLORS['RESET']}")
+                        
+                        # Format subsequent lines with proper indentation and without timestamp
+                        for line in lines[1:]:
+                            # Preserve any existing indentation
+                            indent = len(line) - len(line.lstrip())
+                            if indent > 0:
+                                formatted_lines.append(f"{'    ' * (indent // 4)}{line.lstrip()}")
+                            else:
+                                formatted_lines.append(f"    {line}")
+                    
+                    # Join all lines
+                    record.msg = '\n'.join(formatted_lines)
+                    return record.msg
             
-            console_formatter = ColoredFormatter(
-                '%(asctime)s - %(message)s',
-                datefmt='%H:%M:%S'
-            )
+            console_formatter = ColoredFormatter()
             console_handler.setFormatter(console_formatter)
             
             # File Handler with JSON formatting
@@ -115,7 +134,12 @@ class Logger:
         filled_length = int(round(bar_length * current / float(total)))
         percents = round(100.0 * current / float(total), 1)
         bar = '█' * filled_length + '░' * (bar_length - filled_length)
-        sys.stdout.write(f'\r{prefix} |{bar}| {percents}%')
+        
+        # Format with timestamp
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        progress_line = f"\r{timestamp} - {prefix} |{bar}| {percents}%"
+        
+        sys.stdout.write(progress_line)
         if current == total:
             sys.stdout.write('\n')
         sys.stdout.flush()

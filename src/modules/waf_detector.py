@@ -41,15 +41,6 @@ class WAFDetector:
         }
 
     def detect_waf(self, url: str) -> Dict:
-        """
-        Detect if a website is protected by a WAF and identify which one.
-        
-        Args:
-            url: The target URL to scan
-            
-        Returns:
-            Dict containing WAF detection results
-        """
         try:
             headers = {
                 'User-Agent': self.user_agent,
