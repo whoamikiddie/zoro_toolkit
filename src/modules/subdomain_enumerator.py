@@ -2,7 +2,7 @@ import subprocess
 import socket
 from typing import List, Dict, Optional
 import os
-import httpx
+import httpx # type: ignore
 import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
@@ -151,8 +151,6 @@ class SubdomainEnumerator:
 
         print("\nChecking alive subdomains...")
         alive = await self.check_alive_subdomains(combined)
-
-        print("\nResolving DNS records...")
         resolved = await self.resolve_subdomains(alive)
 
         # Save final results

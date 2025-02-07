@@ -75,10 +75,16 @@ async def analyze_target(domain: str, options: Dict) -> List[Dict]:
             tech_info = []
             for category, techs in tech_result['technologies'].items():
                 if techs:
-                    tech_info.append(f"{category}:")
-                    tech_info.extend(f"    - {tech}" for tech in techs)
-            logger.info("Detected technologies:\n" + "\n".join(tech_info))
-        
+                    tech_info.append(f"{category.capitalize()}:")
+                    tech_info.extend([f"    - {tech}" for tech in techs])
+    
+            if tech_info:
+                logger.info("Detected technologies:\n" + "\n".join(tech_info))
+            else:
+                logger.info("No technologies detected.")
+        else:
+            logger.warning(f"No technologies found for domain: {domain}")
+
         # --> Security Headers
         logger.info("Analyzing security headers...")
         headers_result = await engine.execute_async(http_analyzer.analyze_headers, f"https://{domain}")

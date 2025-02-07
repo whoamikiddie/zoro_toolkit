@@ -1,8 +1,13 @@
 import time
 import asyncio
+import logging
 from threading import Lock
 from typing import Optional
 from .exceptions import RateLimitExceededError
+
+# Set up logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class RateLimiter:
     
@@ -12,6 +17,7 @@ class RateLimiter:
         self.tokens = burst_size
         self.last_update = time.monotonic()
         self._lock = Lock()
+        self._async_lock = asyncio.Lock()
         self._last_warning = 0
         
     def _update_tokens(self) -> None:
@@ -25,7 +31,6 @@ class RateLimiter:
         self.last_update = now
         
     def wait(self, tokens: int = 1) -> None:
-
         with self._lock:
             self._update_tokens()
             
@@ -37,16 +42,15 @@ class RateLimiter:
                 # Warn if waiting too long
                 if now - self._last_warning > 5.0 and wait_time > 1.0:
                     self._last_warning = now
-                    print(f"Rate limit reached, waiting {wait_time:.2f}s")
+                    logger.warning(f"Rate limit reached, waiting {wait_time:.2f}s")
                 
                 time.sleep(wait_time)
                 self._update_tokens()
             
             self.tokens -= tokens
-            
+    
     async def async_wait(self, tokens: int = 1) -> None:
-
-        with self._lock:
+        async with self._async_lock:
             self._update_tokens()
             
             if self.tokens < tokens:
@@ -55,9 +59,17 @@ class RateLimiter:
                 
                 if now - self._last_warning > 5.0 and wait_time > 1.0:
                     self._last_warning = now
-                    print(f"Rate limit reached, waiting {wait_time:.2f}s")
+                    logger.warning(f"Rate limit reached, waiting {wait_time:.2f}s")
                 
                 await asyncio.sleep(wait_time)
                 self._update_tokens()
             
             self.tokens -= tokens
+
+    def check_rate_limit(self, tokens: int = 1) -> None:
+        """Check if there are enough tokens, raise RateLimitExceededError if not."""
+        with self._lock:
+            self._update_tokens()
+            if self.tokens < tokens:
+                raise RateLimitExceededError(f"Rate limit exceeded, need {tokens} token(s).")
+            

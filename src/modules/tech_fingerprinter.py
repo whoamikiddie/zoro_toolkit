@@ -34,7 +34,31 @@ class TechFingerprinter:
                     'express.sid',
                     'connect.sid',
                     'Express'
+                ],
+                'Ruby on Rails': [
+                    'X-Rack-Cache',
+                    'X-Ruby-on-Rails',
+                ],
+                'Spring Boot': [
+                    'X-Spring-Boot',
+                    'spring-boot',
+                ],
+                'ASP.NET': [
+                    'X-AspNet-Version',
+                    'aspnet',
+                ],
+                'Symfony': [
+                    'Symfony',
+                    'symfony',
+                ],
+                'nginx': [
+                    'nginx',
+                    'X-NginX-Cache',
+                    'nginx.com',
+                    'nginx/1.',
+                    'X-Powered-By: Express' 
                 ]
+
             },
             'cms': {
                 'WordPress': [
@@ -51,6 +75,14 @@ class TechFingerprinter:
                     'joomla',
                     'com_content',
                     'Joomla!'
+                ],
+                'Magento': [
+                    'Magento',
+                    'skin/frontend'
+                ],
+                'Ghost': [
+                    'ghost',
+                    'ghost.min.js',
                 ]
             },
             'javascript': {
@@ -68,6 +100,18 @@ class TechFingerprinter:
                     'angular.js',
                     'ng-app',
                     'ng-controller'
+                ],
+                'Svelte': [
+                    'svelte',
+                    'svelte/internal'
+                ],
+                'Ember.js': [
+                    'ember.js',
+                    'ember-template-compiler.js'
+                ],
+                'Backbone.js': [
+                    'backbone.js',
+                    'Backbone.Model'
                 ]
             },
             'analytics': {
@@ -79,6 +123,10 @@ class TechFingerprinter:
                 'Mixpanel': [
                     'mixpanel',
                     'mixpanel.min.js'
+                ],
+                'Hotjar': [
+                    'hotjar.js',
+                    'hjid'
                 ]
             },
             'security': {
@@ -89,6 +137,23 @@ class TechFingerprinter:
                 'Cloudflare': [
                     'cloudflare',
                     '__cfduid'
+                ],
+                'HSTS': [
+                    'Strict-Transport-Security'
+                ]
+            },
+            'ecommerce': {
+                'Shopify': [
+                    'shopify',
+                    'cdn.shopify.com'
+                ],
+                'WooCommerce': [
+                    'woocommerce',
+                    'wc-ajax'
+                ],
+                'BigCommerce': [
+                    'bigcommerce',
+                    'cdn.bigcommerce.com'
                 ]
             }
         }
@@ -177,6 +242,11 @@ class TechFingerprinter:
                     if any(sig.lower() in content.lower() for sig in signatures):
                         technologies.append(('cms', cms))
                 
+                # E-commerce detection
+                for ecommerce, signatures in self.signatures['ecommerce'].items():
+                    if any(sig.lower() in content.lower() for sig in signatures):
+                        technologies.append(('ecommerce', ecommerce))
+                
                 return {'technologies': technologies}
                 
         except Exception as e:
@@ -216,6 +286,7 @@ class TechFingerprinter:
             'javascript': set(),
             'security': set(),
             'analytics': set(),
+            'ecommerce': set(),
             'other': set()
         }
         
